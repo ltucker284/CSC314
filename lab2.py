@@ -9,7 +9,6 @@ character_dict = {
 def check_sequence(sequence: str):
     new_sequence = []
     for character in sequence:
-        # print(character)
         if character in accepted_character:
             new_sequence.append(character)
         else:
@@ -31,12 +30,21 @@ def find_complimentary_sequence(sequence: str):
             temp_list.append(character_dict.get(character))
     return ''.join(temp_list)
 
+def find_reverse_complimentary_sequence(sequence: str):
+    reversed_sequence = sequence[::-1]
+    print(reversed_sequence)
+    temp_list = []
+    for character in reversed_sequence:
+        if character in accepted_character:
+            temp_list.append(character_dict.get(character))
+    return ''.join(temp_list)
+
 sequence = input('Input your sequence here: ')
 sequence = check_sequence(sequence.upper())
 formatted_sequence_length = sequence_length(sequence)
 complimentary_sequence = find_complimentary_sequence(sequence)
-reverse_complimentary_sequence = ''
+reverse_complimentary_sequence = find_reverse_complimentary_sequence(sequence)
 
-print('The sequence you entered is: 5\'- '+ sequence +' -3\'. \nThe length of the sequence is: ' + str(formatted_sequence_length))
-print('The complimentary sequence is: 5\'- ' + complimentary_sequence +' -3\'')
-print('The reverse complimentary sequence is: 5\'- ' + reverse_complimentary_sequence +'-3\'')
+print('The sequence you entered is: 5\'-'+ sequence +'-3\'. \nThe length of the sequence is: ' + str(formatted_sequence_length))
+print('The complimentary sequence is: 5\'-' + complimentary_sequence +'-3\'')
+print('The reverse complimentary sequence is: 3\'-' + reverse_complimentary_sequence +'-5\'')
