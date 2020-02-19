@@ -43,7 +43,6 @@ def analyze_samples(sample_dict, genome_dict):
     count_of_ecoli_matches = 0
     count_of_raoultella_matches = 0
     count_of_zika_matches = 0
-    count_of_unknown_matches = 0
     for key in sample_dict:
         for entry in genome_dict:
             if re.search(sample_dict[key], genome_dict[entry]):
@@ -55,8 +54,7 @@ def analyze_samples(sample_dict, genome_dict):
                     count_of_raoultella_matches += 1
                 elif entry == 'zika':
                     count_of_zika_matches += 1
-                else: count_of_unknown_matches += 1
-    return count_of_human_matches, count_of_ecoli_matches, count_of_raoultella_matches, count_of_zika_matches, count_of_unknown_matches
+    return count_of_human_matches, count_of_ecoli_matches, count_of_raoultella_matches, count_of_zika_matches
 
 
 samples_dict = file_to_dict('samples.txt')
