@@ -1,3 +1,5 @@
+###AUTHOR### Liz Tucker
+
 import os
 import re 
 
@@ -97,3 +99,5 @@ print(f"The length of each sequence is as follows:\n"
         + "human: " + str(len(genome_dict["human"])))
 print(analyze_samples(samples_dict, genome_dict))
 
+#Based on the output of the script from the files provided, it looks like 
+#this person is infected with Raoultella
