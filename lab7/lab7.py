@@ -16,11 +16,6 @@ with open('MAOA.gb.txt') as handle :
     print('Description: ', seq_record.description)
     print('seq length = ', len(seq_record))
 
-    first_five = seq_record.seq[0:5]
-    rev_seq = seq_record.seq[::-1]
-    last_three = rev_seq[0:9]
-    last_three = last_three[::-1]
-
 # loop through each of the features
 for feature in seq_record.features :
 
@@ -47,11 +42,13 @@ for feature in seq_record.features :
         print('=================== CDS location ==================')
         end_cds_position = feature.location.parts[-1] 
         print("CDS end position:", end_cds_position) 
+        first_five_location = feature.location.parts[0]
+        first_five = seq_record.seq[first_five_location.start:first_five_location.start+5]
+        last_three_location = feature.location.parts[-1]
+        last_three = seq_record.seq[last_three_location.end - 9:last_three_location.end]
 
 print('1. The gene is on chromosome:', chromosome)
 print('2. The first 5 nucleotides are:', first_five)
 print('3. The number of exons contained is:', exon_count)
 print('4. The last 3 codons of the protein are:', last_three.transcribe())
 print('5. The last 3 codons code for:', last_three.translate())
-print('6. The last 3 codons of the protein are:', '')
-print('7. The last 3 codons code for:', '') 
