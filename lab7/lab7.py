@@ -1,6 +1,9 @@
 from Bio import SeqIO # to parse Seq data
 #åfrom Bio.Seq import Seq # for Seq
 
+exon_count = 0
+first_five = str()
+
 with open('MAOA.gb.txt') as handle :
 
     # gets an iterator that allows you to go through each entry
@@ -13,7 +16,12 @@ with open('MAOA.gb.txt') as handle :
     print('Description: ', seq_record.description)
     print('seq length = ', len(seq_record))
 
-    # loop through each of the features
+    first_five = seq_record.seq[0:5]
+    rev_seq = seq_record.seq[::-1]
+    last_three = rev_seq[0:9]
+    last_three = last_three[::-1]
+
+# loop through each of the features
 for feature in seq_record.features :
 
     # print out chromosome
@@ -26,11 +34,10 @@ for feature in seq_record.features :
     if feature.type == 'gene':
         print('=================== Gene ==================')
         print(feature)
-        
-        # first5 
 
     # print out exon 13 (this can be used to help count the exons)
     if feature.type == 'exon': 
+        exon_count += 1
         if feature.qualifiers['number'][0] == '13':
             print('=================== Exon 13 ==================')
             print(feature)
@@ -42,9 +49,9 @@ for feature in seq_record.features :
         print("CDS end position:", end_cds_position) 
 
 print('1. The gene is on chromosome:', chromosome)
-print('2. The first 5 nucleotides are:', 'ANSWER HERE')
-print('3. The number of exons contained is:', 'ANSWER HERE')
-print('4. The last 3 codons of the protein are:', 'ANSWER HERE')
-print('5. The last 3 codons code for:', 'ANSWER HERE')
-print('6. The last 3 codons of the protein are:', 'ANSWER HERE')
-print('7. The last 3 codons code for:', 'ANSWER HERE') 
+print('2. The first 5 nucleotides are:', first_five)
+print('3. The number of exons contained is:', exon_count)
+print('4. The last 3 codons of the protein are:', last_three.transcribe())
+print('5. The last 3 codons code for:', last_three.translate())
+print('6. The last 3 codons of the protein are:', '')
+print('7. The last 3 codons code for:', '') 
