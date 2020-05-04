@@ -24,16 +24,18 @@ def chart_maker(seq_1, seq_2, len_seq_1,len_seq_2):
 
 """Calculates the dynamic programming chart"""
 def calc_global_alignment(chart):
+    traceback = []
     index = 1 #vertical index, starting at one to be able to pass the correct value into eval_highest
     v_index=2 #vertical index used to store answers in the chart
     for lst in chart[2:]:
         h_index=2 #horizontal index
         for item in lst[2:]:
-            chart[v_index][h_index] = eval_highest(chart[index][h_index-1], chart[v_index][h_index-1], chart[index][h_index], determine_match(chart[v_index][0],chart[0][h_index]))
+            chart[v_index][h_index] = eval_highest(chart[index][h_index-1], chart[v_index][h_index-1], chart[index][h_index], determine_match(chart[v_index][0],chart[0][h_index]))[0]
+            traceback.append(eval_highest(chart[index][h_index-1], chart[v_index][h_index-1], chart[index][h_index], determine_match(chart[v_index][0],chart[0][h_index])))
             h_index+=1
         v_index+=1
         index+=1
-    return chart
+    return chart, traceback
 
 """Returns true if two character match, false otherwise"""
 def determine_match(char_a, char_b):
@@ -56,14 +58,42 @@ def eval_highest(p_char, h_gap, v_gap, b_match):
     cal_2 = v_gap + gap_penalty
     calc.append(cal_1)
     calc.append(cal_2)
-    return max(calc)
+    if max(calc) == calc[0] and b_match == True:
+        return calc[0], p_char, 'match'
+    elif max(calc) == calc[0] and b_match == False:
+        return calc[0], p_char, 'mismatch'
+    elif max(calc) == calc[1]:
+        return calc[1], h_gap, 'h-gap'
+    else: return calc[2], v_gap, 'v-gap'
+
+def format_alignment(seq1, seq2, full_traceback, length):
+    traceback = []
+    traceback.append(full_traceback[-1])
+    while True:
+        for item in full_traceback:
+            if item[0] == traceback[-1][1]:
+                traceback.append(item)
+        if len(traceback) >= length:
+            break
+    traceback = traceback[::-1]
+    print(traceback)
+
+def get_longer_sequence(seq_1,seq_2):
+    lengths = []
+    lengths.append(len(seq_1))
+    lengths.append(len(seq_2))
+    return max(lengths)
+
 
 def main():
     seq_1 = 'taca'
     seq_2 = 'ttcag'
+    length = get_longer_sequence(seq_1, seq_2)
     chart = chart_maker(seq_1, seq_2, len(seq_1), len(seq_2))
-    chart = calc_global_alignment(chart)
-    pprint(chart)
+    chart = calc_global_alignment(chart)[0]
+    traceback = calc_global_alignment(chart)[1]
+    # pprint(chart)
+    traceback = format_alignment(seq_1, seq_2, traceback, length)
 
 if __name__ == "__main__":
     main()
