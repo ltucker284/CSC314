@@ -69,10 +69,10 @@ def eval_highest(p_char, h_gap, v_gap, b_match):
     elif max(calc) == calc[0] and b_match == False:
         return calc[0], p_char, 'mismatch'
     elif max(calc) == calc[1]:
-        return calc[1], h_gap, 'h-gap'
-    else: return calc[2], v_gap, 'v-gap'
+        return calc[1], h_gap, 'gap'
+    else: return calc[2], v_gap, 'gap'
 
-def format_alignment(seq1, seq2, full_traceback, length):
+def get_traceback(seq1, seq2, full_traceback, length):
     traceback = []
     traceback.append(full_traceback[-1])
     while True:
@@ -99,7 +99,7 @@ def main():
     chart = calc_global_alignment(chart)[0]
     traceback = calc_global_alignment(chart)[1]
     # pprint(chart)
-    traceback = format_alignment(seq_1, seq_2, traceback, length)
+    traceback = get_traceback(seq_1, seq_2, traceback, length)
 
 if __name__ == "__main__":
     main()
