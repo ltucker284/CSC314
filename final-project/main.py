@@ -4,8 +4,14 @@ Done for CSC314 with Professor Dancik
 This script produces the optimal global alignment between
 two sequences using the Dynamic Programming method.
 """
+from Bio import SeqIO
 from pprint import pprint
 
+def get_sequence():
+    with open('') as handle :
+        sequence_iter = SeqIO.parse(handle, "FASTA")
+        seq_record = next(sequence_iter)
+        return seq_record
 
 """Makes the dynamic programming chart"""
 def chart_maker(seq_1, seq_2, len_seq_1,len_seq_2):
