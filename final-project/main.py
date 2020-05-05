@@ -69,8 +69,8 @@ def eval_highest(p_char, h_gap, v_gap, b_match):
     elif max(calc) == calc[0] and b_match == False:
         return calc[0], p_char, 'mismatch'
     elif max(calc) == calc[1]:
-        return calc[1], h_gap, 'gap'
-    else: return calc[2], v_gap, 'gap'
+        return calc[1], h_gap, 'h-gap'
+    else: return calc[2], v_gap, 'v-gap'
 
 """Gets traceback sequence"""
 def get_traceback(full_traceback, length):
@@ -98,17 +98,34 @@ def get_longer_sequence(seq_1,seq_2):
     lengths.append(len(seq_2))
     return max(lengths)
 
+"""Returns sequences as lists fpr printing"""
+def determine_alignment(seq_1, seq_2, traceback):
+    lines=[]
+    seq_1 = [char for char in seq_1]
+    seq_2=[char for char in  seq_2]
+    for item in traceback:
+        if item[2]=='match':
+            lines.append('|')
+        elif item[2]=='v-gap':
+            seq_1.append('-')
+        elif item[2]=='h-gap':
+            seq_2.append('-')
+        else: lines.append('')
+    return seq_1, lines, seq_2
 
 def main():
-    seq_1 = 'taca'
-    seq_2 = 'ttcag'
+    seq_1 = 'toe'
+    seq_2 = 'step'
     length = get_longer_sequence(seq_1, seq_2)
     chart = chart_maker(seq_1, seq_2, len(seq_1), len(seq_2))
     chart = calc_global_alignment(chart)[0]
     traceback = calc_global_alignment(chart)[1]
-    traceback = get_traceback(traceback, length)
-    pprint(chart)
     print(traceback)
+    traceback = get_traceback(traceback, length)
+    alignment = determine_alignment(seq_1, seq_2, traceback)
+    print(alignment)
+    pprint(chart)
+    pprint(traceback)
 
 if __name__ == "__main__":
     main()
