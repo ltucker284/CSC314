@@ -72,18 +72,26 @@ def eval_highest(p_char, h_gap, v_gap, b_match):
         return calc[1], h_gap, 'gap'
     else: return calc[2], v_gap, 'gap'
 
-def get_traceback(seq1, seq2, full_traceback, length):
+"""Gets traceback sequence"""
+def get_traceback(full_traceback, length):
     traceback = []
     traceback.append(full_traceback[-1])
     while True:
+        if len(traceback) > (length-2):
+            break
         for item in full_traceback:
+            if len(traceback) > (length-2):
+                break
             if item[0] == traceback[-1][1]:
                 traceback.append(item)
-        if len(traceback) >= length:
-            break
+            temp = [item for item in full_traceback if traceback[-1][1] in item]
+            for item in temp:
+                if item[0]==traceback[-1][1] and item[1]==0:
+                    traceback.append(item)
     traceback = traceback[::-1]
-    print(traceback)
+    return traceback
 
+"""Returns length of longer sequence"""
 def get_longer_sequence(seq_1,seq_2):
     lengths = []
     lengths.append(len(seq_1))
@@ -98,8 +106,9 @@ def main():
     chart = chart_maker(seq_1, seq_2, len(seq_1), len(seq_2))
     chart = calc_global_alignment(chart)[0]
     traceback = calc_global_alignment(chart)[1]
-    # pprint(chart)
-    traceback = get_traceback(seq_1, seq_2, traceback, length)
+    traceback = get_traceback(traceback, length)
+    pprint(chart)
+    print(traceback)
 
 if __name__ == "__main__":
     main()
