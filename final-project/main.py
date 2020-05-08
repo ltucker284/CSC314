@@ -7,11 +7,11 @@ two sequences using the Dynamic Programming method.
 from Bio import SeqIO
 from pprint import pprint
 
-def get_sequence():
-    with open('') as handle :
-        sequence_iter = SeqIO.parse(handle, "FASTA")
+def get_sequence(filename):
+    with open(filename) as handle :
+        sequence_iter = SeqIO.parse(handle, "genbank")
         seq_record = next(sequence_iter)
-        return seq_record
+        return seq_record.seq
 
 """Makes the dynamic programming chart"""
 def chart_maker(seq_1, seq_2, len_seq_1,len_seq_2):
@@ -73,7 +73,7 @@ def eval_highest(p_char, h_gap, v_gap, b_match):
     else: return calc[2], v_gap, 'v-gap'
 
 """Gets traceback sequence"""
-def get_traceback(full_traceback, length):
+def get_traceback(full_traceback, length, chart):
     traceback = []
     traceback.append(full_traceback[-1])
     while True:
@@ -88,6 +88,13 @@ def get_traceback(full_traceback, length):
             for item in temp:
                 if item[0]==traceback[-1][1] and item[1]==0:
                     traceback.append(item)
+    for item in chart[1][1:]:
+        index=1
+        if traceback[-1][1] == item and traceback[-1][0] == chart[2][index]:
+            traceback.append((chart[1][index], item, 'h-gap'))
+    for index, item in enumerate(chart[2:]):
+        if traceback[-1][1] == item[1] and traceback[-1][0] == chart[index+3][2]:
+            traceback.append((chart[1][index], item[1], 'v-gap'))
     traceback = traceback[::-1]
     return traceback
 
@@ -98,34 +105,75 @@ def get_longer_sequence(seq_1,seq_2):
     lengths.append(len(seq_2))
     return max(lengths)
 
-"""Returns sequences as lists fpr printing"""
+"""Returns sequences as lists for printing"""
 def determine_alignment(seq_1, seq_2, traceback):
     lines=[]
-    seq_1 = [char for char in seq_1]
-    seq_2=[char for char in  seq_2]
+    seq_1_a = []
+    seq_2_a = []
+    index = 0
     for item in traceback:
         if item[2]=='match':
             lines.append('|')
+            if index >= len(seq_1):
+                seq_1_a.append('-')
+            else:
+                seq_1_a.append(seq_1[index])
+            seq_2_a.append(seq_2[index])
         elif item[2]=='v-gap':
-            seq_1.append('-')
+            lines.append('')
+            if index >= len(seq_1):
+                seq_1_a.append('-')
+            else:
+                seq_1_a.append(seq_1[index])
+            seq_2_a.append(seq_2[index])
         elif item[2]=='h-gap':
-            seq_2.append('-')
-        else: lines.append('')
+            lines.append('')
+            seq_2_a.append('-')
+            seq_1_a.append(seq_1[index])
+            seq_2_a.append(seq_2[index])
+        else: 
+            lines.append('')
+            if index >= len(seq_1):
+                seq_1_a.append('-')            
+            else:
+                seq_1_a.append(seq_1[index])
+            seq_2_a.append(seq_2[index])
+        index+=1
+    return seq_1_a, lines, seq_2_a
+
+def format_alignment(alignment):
+    seq_1 = str()
+    lines= str()
+    seq_2 = str()
+    for char in alignment[0]:
+        seq_1+=char
+    lines= ''.join(alignment[1])
+    for char in alignment[2]:
+        seq_2+=char
     return seq_1, lines, seq_2
 
 def main():
-    seq_1 = 'toe'
-    seq_2 = 'step'
+    filename_1 = input('Please enter a sequence filename: ')
+    filename_2 = input('Please enter a second sequence filename: ')
+    seq_1 = get_sequence(filename_1)
+    seq_1=seq_1[0:10]
+    seq_2 = get_sequence(filename_2)
+    seq_2=seq_2[0:10]
     length = get_longer_sequence(seq_1, seq_2)
     chart = chart_maker(seq_1, seq_2, len(seq_1), len(seq_2))
     chart = calc_global_alignment(chart)[0]
     traceback = calc_global_alignment(chart)[1]
-    print(traceback)
-    traceback = get_traceback(traceback, length)
+    traceback = get_traceback(traceback, length, chart)
     alignment = determine_alignment(seq_1, seq_2, traceback)
-    print(alignment)
+    alignment = format_alignment(alignment)
+    print()
+    print('------------------Dynamic Programming Matrix------------------')
     pprint(chart)
+    print('------Traceback------')
     pprint(traceback)
+    print('------Alignment------')
+    for item in alignment:
+        print(item)
 
 if __name__ == "__main__":
     main()
